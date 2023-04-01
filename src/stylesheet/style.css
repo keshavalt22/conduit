@@ -1,0 +1,526 @@
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+    display: block;
+}
+
+body {
+    line-height: 1;
+}
+
+ol,
+ul {
+    list-style: none;
+}
+
+blockquote,
+q {
+    quotes: none;
+}
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+
+/*Custom Style*/
+
+@keyframes bouncing-loader {
+    to {
+        opacity: 0.1;
+        transform: translate3d(0, -16px, 0);
+    }
+}
+
+.bouncing-loader {
+    display: flex;
+    justify-content: center;
+}
+
+.bouncing-loader>div {
+    width: 16px;
+    height: 16px;
+    margin: 3rem 0.2rem;
+    background: #8385aa;
+    border-radius: 50%;
+    animation: bouncing-loader 0.6s infinite alternate;
+}
+
+.bouncing-loader>div:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.bouncing-loader>div:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+
+/*Custom Style*/
+
+@keyframes bouncing-loader {
+    to {
+        opacity: 0.1;
+        transform: translate3d(0, -16px, 0);
+    }
+}
+
+.bouncing-loader {
+    display: flex;
+    justify-content: center;
+}
+
+.bouncing-loader>div {
+    width: 16px;
+    height: 16px;
+    margin: 3rem 0.2rem;
+    background: #8385aa;
+    border-radius: 50%;
+    animation: bouncing-loader 0.6s infinite alternate;
+}
+
+.bouncing-loader>div:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.bouncing-loader>div:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+
+*,
+*::after,
+*::before {
+    box-sizing: border-box;
+}
+
+body {
+    max-width: 1300px;
+    font-size: 18px;
+    line-height: 1.5;
+    font-family: 'Roboto', sans-serif;
+}
+
+
+.container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 12px 32px;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: 800;
+    color: rgb(92, 184, 92);
+}
+
+.header {
+    padding: 16px 0;
+}
+
+.nav {
+    display: flex;
+
+}
+
+.nav p {
+    margin-left: 15px;
+    color: #8385aa;
+}
+
+a {
+    text-decoration: none;
+}
+
+.center {
+    text-align: center;
+}
+
+.flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.width-180px {
+    width: 180px;
+}
+
+.width-200px {
+    width: 200px;
+}
+
+.main-flex {
+    display: flex;
+    justify-content: space-between;
+}
+
+.active p {
+    color: rgb(92, 184, 92);
+    font-size: 18px;
+    font-weight: 900;
+}
+
+
+form {
+    width: 600px;
+    text-align: center;
+    margin: 0 auto;
+    padding-top: 50px;
+}
+
+form .error {
+    border: 2px solid red;
+    color: red;
+}
+
+.errormsg {
+    font-size: 12px;
+    text-align: center;
+    color: red;
+}
+
+input {
+    display: block;
+    width: 40%;
+    margin: 12px auto;
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+textarea {
+    width: 40%;
+    border: 2px solid black;
+    margin: 12px auto;
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+.label {
+    margin-top: 20px;
+}
+
+.btn {
+    background-color: limegreen;
+    color: white;
+    margin-top: 20px;
+}
+
+.hero {
+    text-align: center;
+    padding: 34px 0;
+    color: white;
+    background-color: rgb(92, 184, 92);
+    line-height: 2;
+}
+
+.hero h2 {
+    font-size: 44px;
+    font-weight: 900;
+}
+
+.hero p {
+    font-size: 22px;
+    font-weight: 100;
+}
+
+.nomatch {
+    padding-top: 84px;
+    font-size: 34px;
+    font-weight: 800;
+}
+
+.article {
+    padding: 14px 0;
+}
+
+.article h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: black;
+}
+
+.article p {
+    font-size: 16px;
+    color: #8385aa;
+}
+
+.readmore {
+    padding: 12px 0;
+}
+
+.description p {
+    font-size: 12px;
+}
+
+.likes {
+    color: rgb(92, 184, 92);
+    font-size: 14px;
+    border: 1.7px solid rgb(92, 184, 92);
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.likes span {
+    margin-left: 4px;
+}
+
+.articles {
+    width: 65%;
+}
+
+.articles hr {
+    color: #dedee4;
+
+}
+
+.aside {
+    width: 30%;
+    background-color: rgb(243, 243, 243);
+    height: 100%;
+    padding: 24px 0;
+    margin: 20px auto;
+}
+
+.tags {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.tag {
+    height: 8px;
+    padding: 12px 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(129, 138, 145);
+    color: white;
+    border-radius: 6px;
+    margin: 5px;
+    font-size: 14px;
+}
+
+.pagination span {
+    font-size: 20px;
+    border: 2px solid gray;
+    margin: 0 6px;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.pagination span:hover {
+    background-color: #c3c4c8;
+    opacity: 0.8;
+}
+
+.pg-btn {
+    background-color: rgb(92, 184, 92);
+    color: white;
+    font-size: 20px;
+    border: 1px solid;
+    padding: 4px 12px;
+    border-radius: 4px;
+}
+
+.pagination .active {
+    background-color: rgb(92, 184, 92);
+    color: white;
+}
+
+.article-head {
+    background-color: rgb(51, 51, 51);
+    color: white;
+    padding: 20px;
+}
+
+.article-head h3 {
+    font-size: 24px;
+    font-weight: 800;
+    color: white;
+    padding: 16px 0;
+}
+
+.article-head img {
+    border-radius: 50%;
+}
+
+.single-post p {
+    font-size: 18px;
+    color: #8385aa;
+}
+
+.article-head p {
+    font-size: 12px;
+}
+
+.article-body {
+    padding: 12px 0;
+}
+
+.feed-nav a {
+    color: #8385aa;
+}
+
+.feed-nav .active {
+    color: rgb(92, 184, 92);
+}
+
+.footer Link {
+    color: rgb(92, 184, 92);
+}
+
+.newpost {
+    width: 60%;
+    border: 1px solid gainsboro;
+}
+
+.addcomments {
+    text-align: left;
+}
+
+.addcomments form input {
+    margin: 0;
+}
+
+.addcomments form {
+    text-align: left;
+    margin: 0;
+}
+
+.addcomments img {
+    width: 30px;
+    border-radius: 50%;
+}
+
+.user-info {
+    width: 200px;
+    margin: 12px 0;
+    padding: 6px;
+    border: 1px solid gray;
+    border-radius: 12px;
+}
+
+.delete-btn {
+    background-color: red;
+    color: white;
+    margin: 20px 12px;
+    padding: 8px 18px;
+    border-radius: 12px;
+    border: 0px solid;
+}
+
+.edit-btn {
+    background-color: rgb(92, 184, 92);
+    color: white;
+    margin: 20px 12px;
+    padding: 8px 18px;
+    border-radius: 12px;
+    border: 0px solid;
+}
