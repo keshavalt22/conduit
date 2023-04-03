@@ -95,7 +95,7 @@ function AuthenticatedApp(props) {
         <Routes>
             <Route
                 path="/"
-                element={<Home />}
+                element={<Home user={props.user} isLoggedIn={props.isLoggedIn} />}
             />
             <Route
                 path="/new_post"
@@ -140,7 +140,7 @@ function UnauthenticatedApp(props) {
         <Routes>
             <Route
                 path="/"
-                element={<Home />}
+                element={<Home user={props.user} isLoggedIn={props.isLoggedIn} />}
             />
             <Route
                 path="/login"

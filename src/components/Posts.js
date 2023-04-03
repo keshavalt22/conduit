@@ -20,7 +20,12 @@ function Posts(props) {
             <h2 className="nomatch">No articles found!</h2>
         )
     }
-    return articles.map((article) => <Post key={article.slug} {...article} />)
+    return articles.map((article) => <Post
+        key={article.slug}
+        {...article}
+        user={props.user}
+        isLoggedIn={props.isLoggedIn}
+    />)
 }
 
 export default Posts;
