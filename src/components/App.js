@@ -14,6 +14,8 @@ import NewPost from "./NewPost";
 import Setting from "./Setting";
 import Profile from "./Profile";
 import EditPost from "./EditPost";
+import ErrorBoundary from "../utils/ErrorBoundary";
+import UserContext from "../utils/UserContext";
 
 
 
@@ -67,24 +69,32 @@ class App extends React.Component {
     }
 
     render() {
+        let data = this.state;
+        let updateUser = this.updateUser;
+        let handleLogout = this.handleLogout;
+
         if (this.state.isVerifying) {
             return <FullPageSpinner />
         }
         return (
             <div className="container">
-                <Header isLoggedIn={this.state.isLoggedIn} user={this.state.user} />
-                {
-                    this.state.isLoggedIn
-                        ? <AuthenticatedApp
-                            isLoggedIn={this.state.isLoggedIn}
-                            user={this.state.user}
-                            handleLogout={this.handleLogout}
-                        />
-                        : <UnauthenticatedApp
-                            isLoggedIn={this.state.isLoggedIn}
-                            updateUser={this.updateUser}
-                            user={this.state.user} />
-                }
+                <ErrorBoundary>
+                    <UserContext.Provider value={{ data, handleLogout, updateUser }}>
+                        <Header isLoggedIn={this.state.isLoggedIn} user={this.state.user} />
+                        {
+                            this.state.isLoggedIn
+                                ? <AuthenticatedApp
+                                    isLoggedIn={this.state.isLoggedIn}
+                                    user={this.state.user}
+                                    handleLogout={this.handleLogout}
+                                />
+                                : <UnauthenticatedApp
+                                    isLoggedIn={this.state.isLoggedIn}
+                                    updateUser={this.updateUser}
+                                    user={this.state.user} />
+                        }
+                    </UserContext.Provider>
+                </ErrorBoundary>
             </div>
         )
     }
@@ -111,21 +121,15 @@ function AuthenticatedApp(props) {
             />
             <Route
                 path="/settings"
-                element={<Setting
-                    user={props.user}
-                    updateUser={props.updateUser}
-                    handleLogout={props.handleLogout}
-                />}
+                element={<Setting />}
             />
             <Route
                 path="/profile"
-                element={<Profile
-                    user={props.user}
-                />}
+                element={<Profile />}
             />
             <Route
                 path="/article/:slug"
-                element={<SinglePost user={props.user} />}
+                element={<SinglePost />}
             />
             <Route
                 path="*"

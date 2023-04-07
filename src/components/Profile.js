@@ -3,6 +3,7 @@ import Pagination from "./Pagination";
 import ProfileBanner from "./ProfileBanner";
 import { articlesURL } from "../utils/constant";
 import Posts from "./Posts";
+import UserContext from "../utils/UserContext";
 
 
 class Profile extends React.Component {
@@ -14,9 +15,12 @@ class Profile extends React.Component {
         activePage: 1,
     }
 
+    static contextType = UserContext;
+
 
     fetchData = () => {
-        fetch(articlesURL + `/?${this.state.activeTab}=${this.props.user.username}`)
+        let info = this.context;
+        fetch(articlesURL + `/?${this.state.activeTab}=${info.data.user.username}`)
             .then(res => {
                 if (!res.ok) {
                     throw new Error("Something went wrong!")
@@ -47,12 +51,12 @@ class Profile extends React.Component {
         this.setState({ activePage: index }, this.fetchData)
     }
 
+
     render() {
         let { articles, activeTab, articlesCount, articlesPerPage, activePage, } = this.state;
-        let { user } = this.props;
         return (
             <section>
-                <ProfileBanner user={user} />
+                <ProfileBanner />
                 <nav>
                     <ul className="flex width-200px feed-nav">
                         <li>

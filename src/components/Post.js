@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { articlesURL } from "../utils/constant";
+import UserContext from "../utils/UserContext";
 
 class Post extends React.Component {
 
@@ -37,9 +38,12 @@ class Post extends React.Component {
             .then(({ article }) => favoritesCount - 1);
     }
 
+    static contextType = UserContext
 
     render() {
         const { author, createdAt, favoritesCount, title, description, slug } = this.props;
+        let info = this.context;
+
         return (
             <div className="article">
                 <div className="flex">
@@ -57,7 +61,7 @@ class Post extends React.Component {
                         </div>
                     </div>
                     <div className="likes">
-                        {this.props.isLoggedIn ? (
+                        {info.data.isLoggedIn ? (
                             <div>
                                 <button
                                     onClick={this.handleFavourite}

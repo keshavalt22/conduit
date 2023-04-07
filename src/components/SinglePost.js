@@ -5,6 +5,7 @@ import withRouter from "../utils/withRouter";
 import Loader from "./Loader";
 import Comments from "./Comments";
 import AddComments from "./AddComments";
+import UserContext from "../utils/UserContext";
 
 
 class SinglePost extends React.Component {
@@ -58,10 +59,10 @@ class SinglePost extends React.Component {
             .then(navigate("/"))
     }
 
-
+    static contextType = UserContext;
 
     render() {
-
+        let info = this.context;
         const { article, error, comments } = this.state;
         let slug = this.props.params.slug;
 
@@ -134,7 +135,7 @@ class SinglePost extends React.Component {
                             </div>
                         ) : (
                             <AddComments
-                                user={this.props.user}
+                                user={info.data.user}
                                 slug={slug}
                             />
                         )
