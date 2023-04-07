@@ -1,6 +1,10 @@
 import { NavLink } from "react-router-dom"
+import UserContext from "../utils/UserContext"
+import { useContext } from "react"
 
 function Header(props) {
+    const user = useContext(UserContext);
+
     return (
         <div className="header flex">
             <NavLink to='/' activeClassName="active" exact>
@@ -8,7 +12,7 @@ function Header(props) {
             </NavLink>
             <nav className="nav">
                 {
-                    props.isLoggedIn ? <AuthHeader /> : <NonAuthHeader />
+                    user.data.isLoggedIn ? <AuthHeader /> : <NonAuthHeader />
                 }
             </nav>
         </div>

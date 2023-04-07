@@ -1,5 +1,6 @@
 import React from "react";
 import { articlesURL } from "../utils/constant";
+import UserContext from "../utils/UserContext";
 
 
 class Comments extends React.Component {
@@ -20,7 +21,14 @@ class Comments extends React.Component {
         })
     }
 
+    static contextType = UserContext;
+
     render() {
+
+        let info = this.context;
+
+        console.log(info.data.user.username);
+
         if (!this.props.comments) {
             return "";
         }
@@ -49,7 +57,7 @@ class Comments extends React.Component {
                                 </div>
                                 {this.props.user === null ? (
                                     ""
-                                ) : this.props.user.username === comment.author.username ? (
+                                ) : info.data.user.username === comment.author.username ? (
                                     <button onClick={() => this.handleDelete(comment.id)}>
                                         Delete
                                     </button>

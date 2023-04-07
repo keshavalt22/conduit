@@ -1,6 +1,7 @@
 import React from "react";
 import { userVerifyURL } from "../utils/constant";
 import withRouter from "../utils/withRouter";
+import UserContext from "../utils/UserContext";
 
 class Setting extends React.Component {
     constructor(props) {
@@ -63,10 +64,15 @@ class Setting extends React.Component {
             .catch((errors) => this.setState({ errors }))
     }
 
+    static contextType = UserContext;
 
     render() {
+        let info = this.context;
+        console.log(info)
+
         let { username, bio, image, email, password } = this.state;
-        let { handleLogout } = this.props;
+        let handleLogout = info.handleLogout;
+
         return (
             <div>
                 <form className="newpost">
@@ -74,14 +80,14 @@ class Setting extends React.Component {
                         value={username}
                         name="username"
                         type="text"
-                        placeholder={this.props.user.username}
+                        placeholder={info.data.user.username}
                         onChange={this.handleChange}
                     />
                     <input
                         value={email}
                         name="email"
                         type="email"
-                        placeholder={this.props.user.email}
+                        placeholder={info.data.user.email}
                         onChange={this.handleChange}
                     />
                     <textarea

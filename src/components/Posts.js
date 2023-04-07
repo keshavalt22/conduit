@@ -23,8 +23,6 @@ function Posts(props) {
     return articles.map((article) => <Post
         key={article.slug}
         {...article}
-        user={props.user}
-        isLoggedIn={props.isLoggedIn}
     />)
 }
 
