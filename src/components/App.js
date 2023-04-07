@@ -14,6 +14,7 @@ import NewPost from "./NewPost";
 import Setting from "./Setting";
 import Profile from "./Profile";
 import EditPost from "./EditPost";
+import ErrorBoundary from "./errorBoundary/ErrorBoundary";
 
 
 
@@ -72,6 +73,7 @@ class App extends React.Component {
         }
         return (
             <div className="container">
+
                 <Header isLoggedIn={this.state.isLoggedIn} user={this.state.user} />
                 {
                     this.state.isLoggedIn
