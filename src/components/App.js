@@ -73,21 +73,20 @@ class App extends React.Component {
         }
         return (
             <div className="container">
-                <ErrorBoundary>
-                    <Header isLoggedIn={this.state.isLoggedIn} user={this.state.user} />
-                    {
-                        this.state.isLoggedIn
-                            ? <AuthenticatedApp
-                                isLoggedIn={this.state.isLoggedIn}
-                                user={this.state.user}
-                                handleLogout={this.handleLogout}
-                            />
-                            : <UnauthenticatedApp
-                                isLoggedIn={this.state.isLoggedIn}
-                                updateUser={this.updateUser}
-                                user={this.state.user} />
-                    }
-                </ErrorBoundary>
+
+                <Header isLoggedIn={this.state.isLoggedIn} user={this.state.user} />
+                {
+                    this.state.isLoggedIn
+                        ? <AuthenticatedApp
+                            isLoggedIn={this.state.isLoggedIn}
+                            user={this.state.user}
+                            handleLogout={this.handleLogout}
+                        />
+                        : <UnauthenticatedApp
+                            isLoggedIn={this.state.isLoggedIn}
+                            updateUser={this.updateUser}
+                            user={this.state.user} />
+                }
             </div>
         )
     }
