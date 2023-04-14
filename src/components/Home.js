@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import FeedNav from "./FeedNav";
 import Hero from "./Hero";
 import Posts from "./Posts";
@@ -6,90 +6,77 @@ import Sidebar from "./Sidebar";
 import Pagination from "./Pagination";
 import { articlesURL } from "../utils/constant";
 
-class Home extends React.Component {
+function Home(props) {
 
-    state = {
-        articles: null,
-        error: "",
-        articlesCount: 0,
-        articlesPerPage: 10,
-        activePage: 1,
-        activeTab: "",
+    const [articles, setArticles] = useState(null);
+    const [error, setError] = useState("");
+    const [articlesCount, setArticlesCount] = useState(0);
+    const [articlesPerPage, setArticlesPerPage] = useState(10);
+    const [activePage, setActivePage] = useState(1);
+    const [activeTab, setActiveTab] = useState("");
+
+    const removeTab = () => {
+        setActiveTab("")
     }
 
-    removeTab = () => {
-        this.setState({ activeTab: "" })
+    const addTab = (value) => {
+        setActiveTab(value)
     }
 
-    addTab = (value) => {
-        this.setState({ activeTab: value })
-    }
+    useEffect(() => {
+        fetchData()
+    }, [activePage, activeTab])
 
-    componentDidMount() {
-        this.fetchData();
-    }
+    function fetchData() {
 
-    componentDidUpdate(_prevProps, prevState) {
-        if (prevState.activePage !== this.state.activePage ||
-            prevState.activeTab !== this.state.activeTab) {
-            this.fetchData()
-        }
-    }
-
-    fetchData = () => {
-
-        let limit = this.state.articlesPerPage;
-        let offset = (this.state.activePage - 1) * limit;
-        let tag = this.state.activeTab;
+        let limit = articlesPerPage;
+        let offset = (activePage - 1) * limit;
+        let tag = activeTab;
 
         fetch(articlesURL + `/?offset=${offset}&limit=${limit}` + (tag && `&tag=${tag}`))
             .then(res => {
                 if (!res.ok) {
-                    throw new Error("Something went wrong!")
+                    throw new Error("Something went wrong!");
                 }
                 return res.json();
             })
-            .then(data => this.setState({
-                articles: data.articles,
-                error: "",
-                articlesCount: data.articlesCount
-            }))
-            .catch(err => {
-                this.setState({ error: "Not able to fetch articles!" })
+            .then((data) => {
+                setArticles(data.articles);
+                setError("");
+                setArticlesCount(data.articlesCount);
             })
+            .catch(err => {
+                setError("Not able to fetch articles!");
+            });
     }
 
-    updateCurrentPageIndex = (index) => {
-        this.setState({ activePage: index }, this.fetchData)
+    const updateCurrentPageIndex = (index) => {
+        setActivePage(index)
     }
 
-    render() {
-
-        const { articles, error, articlesCount, articlesPerPage, activePage, activeTab } = this.state;
-        return (
-            <main>
-                <Hero />
-                <FeedNav activeTab={activeTab} removeTab={this.removeTab} />
-                <div className="main-flex">
-                    <section className="articles">
-                        <Posts
-                            articles={articles}
-                            error={error}
-                            user={this.props.user}
-                            isLoggedIn={this.props.isLoggedIn}
-                        />
-                        <Pagination
-                            articlesCount={articlesCount}
-                            articlesPerPage={articlesPerPage}
-                            activePage={activePage}
-                            updateCurrentPageIndex={this.updateCurrentPageIndex}
-                        />
-                    </section>
-                    <Sidebar addTab={this.addTab} />
-                </div>
-            </main>
-        )
-    }
+    return (
+        <main>
+            <Hero />
+            <FeedNav activeTab={activeTab} removeTab={removeTab} />
+            <div className="main-flex">
+                <section className="articles">
+                    <Posts
+                        articles={articles}
+                        error={error}
+                        user={props.user}
+                        isLoggedIn={props.isLoggedIn}
+                    />
+                    <Pagination
+                        articlesCount={articlesCount}
+                        articlesPerPage={articlesPerPage}
+                        activePage={activePage}
+                        updateCurrentPageIndex={updateCurrentPageIndex}
+                    />
+                </section>
+                <Sidebar addTab={addTab} />
+            </div>
+        </main>
+    )
 }
 
 export default Home;

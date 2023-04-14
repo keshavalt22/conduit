@@ -1,30 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import { signupURL } from "../utils/constant";
 import withRouter from "../utils/withRouter";
 
-class Signup extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
+function Signup(props) {
+    const [formvalue, setFormvalue] = useState({
+        username: "",
+        email: "",
+        password: "",
+        errors: {
             username: "",
             email: "",
             password: "",
-            errors: {
-                username: "",
-                email: "",
-                password: "",
-            }
         }
-    }
+    })
 
-    validEmail = (email) => {
+    const validEmail = (email) => {
         var filter = /^\s*[\w\-\+_]+(\.[\w\-\+_]+)*\@[\w\-\+_]+\.[\w\-\+_]+(\.[\w\-\+_]+)*\s*$/;
         return String(email).search(filter) !== -1;
     }
 
-    handleInput = ({ target }) => {
+    const handleInput = ({ target }) => {
         let { name, value } = target
-        let errors = this.state.errors;
+        let errors = { ...formvalue.errors };
 
 
         switch (name) {
@@ -34,7 +31,7 @@ class Signup extends React.Component {
                     : "";
                 break;
             case "email":
-                errors.email = this.validEmail(value) ? "" : "Email is not valid!"
+                errors.email = validEmail(value) ? "" : "Email is not valid!"
                 break;
             case "password":
                 let re = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])/;
@@ -47,13 +44,13 @@ class Signup extends React.Component {
                 break;
         }
 
-        this.setState({ [name]: value, errors });
+        setFormvalue({ ...formvalue, [name]: value, errors });
     }
 
-    handleSubmit = async (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        const { username, email, password } = this.state;
-        let navigate = this.props;
+        const { username, email, password } = formvalue;
+        let { navigate } = props;
         fetch(signupURL, {
             method: "POST",
             headers: {
@@ -75,49 +72,46 @@ class Signup extends React.Component {
                 this.props.updateUser(user);
                 navigate('/');
             })
-            .catch((errors) => this.setState({ errors }))
+            .catch((errors) => setFormvalue({ errors }))
     }
 
-    render() {
-        let { email, username, password, errors } = this.state;
 
-        return (
-            <form onSubmit={this.handleSubmit}>
-                <input
-                    value={email}
-                    onChange={this.handleInput}
-                    name="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    className={errors.email && "error"}
-                ></input>
-                <span className="errormsg">{errors.email}</span>
-                <input
-                    value={username}
-                    onChange={this.handleInput}
-                    name="username"
-                    type="text"
-                    placeholder="Enter your username"
-                    className={errors.username && "error"}
-                ></input>
-                <span className="errormsg">{errors.username}</span>
-                <input
-                    value={password}
-                    onChange={this.handleInput}
-                    name="password"
-                    type="password"
-                    placeholder="Enter your password"
-                    className={errors.password && "error"}
-                ></input>
-                <span className="errormsg">{errors.password}</span>
-                <input
-                    className="btn"
-                    disabled={errors.email || errors.password || errors.username}
-                    type="submit"
-                    value="submit"
-                />
-            </form>
-        )
-    }
+    return (
+        <form onSubmit={handleSubmit}>
+            <input
+                value={formvalue.email}
+                onChange={handleInput}
+                name="email"
+                type="email"
+                placeholder="Enter your email"
+                className={formvalue.errors.email && "error"}
+            ></input>
+            <span className="errormsg">{formvalue.errors.email}</span>
+            <input
+                value={formvalue.username}
+                onChange={handleInput}
+                name="username"
+                type="text"
+                placeholder="Enter your username"
+                className={formvalue.errors.username && "error"}
+            ></input>
+            <span className="errormsg">{formvalue.errors.username}</span>
+            <input
+                value={formvalue.password}
+                onChange={handleInput}
+                name="password"
+                type="password"
+                placeholder="Enter your password"
+                className={formvalue.errors.password && "error"}
+            ></input>
+            <span className="errormsg">{formvalue.errors.password}</span>
+            <input
+                className="btn"
+                disabled={formvalue.errors.email || formvalue.errors.password || formvalue.errors.username}
+                type="submit"
+                value="submit"
+            />
+        </form>
+    )
 }
 export default withRouter(Signup);

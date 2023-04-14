@@ -1,18 +1,20 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { articlesURL } from "../utils/constant";
 import UserContext from "../utils/UserContext";
 
-class Post extends React.Component {
+function Post(props) {
 
-    handleFavourite = () => {
-        let { favoritesCount, slug } = this.props;
+    let info = useContext(UserContext);
+
+    const handleFavourite = () => {
+        let { favoritesCount, slug } = props;
         console.log(favoritesCount)
         fetch(articlesURL + "/" + slug + "/favorite", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                authorization: `Token${this.props.user.token}`,
+                authorization: `Token ${info.data.user.token}`,
             },
         })
             .then((res) => {
@@ -26,7 +28,7 @@ class Post extends React.Component {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                authorization: `Token${this.props.user.token}`,
+                authorization: `Token ${info.data.user.token}`,
             },
         })
             .then((res) => {
@@ -38,64 +40,57 @@ class Post extends React.Component {
             .then(({ article }) => favoritesCount - 1);
     }
 
-    static contextType = UserContext
+    const { author, createdAt, favoritesCount, title, description, slug } = props;
 
-    render() {
-        const { author, createdAt, favoritesCount, title, description, slug } = this.props;
-        let info = this.context;
 
-        return (
-            <div className="article">
+    return (
+        <div className="article">
+            <div className="flex">
                 <div className="flex">
-                    <div className="flex">
+                    {/* <Link> */}
+                    <img src={author.image} alt={author.username}></img>
+                    {/* </Link> */}
+                    <div className="description">
                         {/* <Link> */}
-                        <img src={author.image} alt={author.username}></img>
+                        <p>{author.username}</p>
                         {/* </Link> */}
-                        <div className="description">
-                            {/* <Link> */}
-                            <p>{author.username}</p>
-                            {/* </Link> */}
-                            <time dateTime="">
-                                <p>{createdAt}</p>
-                            </time>
-                        </div>
-                    </div>
-                    <div className="likes">
-                        {info.data.isLoggedIn ? (
-                            <div>
-                                <button
-                                    onClick={this.handleFavourite}
-                                >
-                                    <span>&hearts;</span>{favoritesCount}
-                                </button>
-                            </div>
-                        ) : (
-                            <div>
-                                <button>
-                                    <span>&hearts;</span> {favoritesCount}
-                                </button>
-                            </div>
-                        )}
+                        <time dateTime="">
+                            <p>{createdAt}</p>
+                        </time>
                     </div>
                 </div>
-                <div>
-                    <Link to={`/article/${slug}`}>
+                <div className="likes">
+                    {info.data.isLoggedIn ? (
                         <div>
-                            <h2>{title}</h2>
-                            <p>{description}</p>
+                            <button
+                                onClick={handleFavourite}
+                            >
+                                <span>&hearts;</span>{favoritesCount}
+                            </button>
                         </div>
-                    </Link>
-                    <Link to={`/article/${slug}`}>
-                        <p className="readmore">Read more...</p>
-                        <hr></hr>
-                    </Link>
+                    ) : (
+                        <div>
+                            <button>
+                                <span>&hearts;</span> {favoritesCount}
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
-        )
-    }
-
-
-
+            <div>
+                <Link to={`/article/${slug}`}>
+                    <div>
+                        <h2>{title}</h2>
+                        <p>{description}</p>
+                    </div>
+                </Link>
+                <Link to={`/article/${slug}`}>
+                    <p className="readmore">Read more...</p>
+                    <hr></hr>
+                </Link>
+            </div>
+        </div>
+    )
 }
 
 

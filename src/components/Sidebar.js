@@ -1,16 +1,14 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { tagsURL } from "../utils/constant";
 import Loader from "./Loader";
 
 
-class Sidebar extends React.Component {
-    state = {
-        tags: null,
-        error: ""
-    }
+function Sidebar(props) {
+    const [tags, setTags] = useState(null);
+    const [error, setError] = useState("");
 
 
-    componentDidMount() {
+    const fetchData = () => {
         fetch(tagsURL)
             .then((res) => {
                 if (!res.ok) {
@@ -18,37 +16,38 @@ class Sidebar extends React.Component {
                 }
                 return res.json();
             })
-            .then(({ tags }) => {
-                this.setState({ tags, error: "" })
+            .then((data) => {
+                setTags(data.tags);
+                setError(data.error);
             })
             .catch((err) => {
-                this.setState({ error: "Not able to fetch tags!" })
+                setError("Not able to fetch tags!")
             });
     }
 
-    render() {
+    useEffect(() => {
+        fetchData()
+    }, [tags])
 
-        const { tags, error } = this.state;
-        if (error) {
-            return (
-                <div className="center">
-                    <h2 className="nomatch">{error}</h2>
-                </div>
-            )
-        }
-        if (!tags) {
-            return <Loader />
-        }
+    if (error) {
         return (
-            <aside className="aside">
-                <h3>Popular Tags</h3>
-                <div className="tags">
-                    {tags.map(tag =>
-                        <span onClick={() => this.props.addTab(tag)} key={tag} className="tag">{tag}</span>)}
-                </div>
-            </aside>
+            <div className="center">
+                <h2 className="nomatch">{error}</h2>
+            </div>
         )
     }
+    if (!tags) {
+        return <Loader />
+    }
+    return (
+        <aside className="aside">
+            <h3>Popular Tags</h3>
+            <div className="tags">
+                {tags.map(tag =>
+                    <span onClick={() => props.addTab(tag)} key={tag} className="tag">{tag}</span>)}
+            </div>
+        </aside>
+    )
 }
 
 

@@ -1,40 +1,39 @@
-import React from "react";
+import React, { useState, useContext } from "react";
 import { articlesURL } from "../utils/constant";
 import withRouter from "../utils/withRouter";
+import UserContext from "../utils/UserContext";
 
-class NewPost extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
+function NewPost(props) {
+    let info = useContext(UserContext);
+    const [formvalue, setFormvalue] = useState({
+        title: "",
+        description: "",
+        body: "",
+        tagList: "",
+        errors: {
             title: "",
             description: "",
             body: "",
             tagList: "",
-            errors: {
-                title: "",
-                description: "",
-                body: "",
-                tagList: "",
-            }
         }
-    }
+    })
 
 
-    handleChange = ({ target }) => {
+    const handleChange = ({ target }) => {
         let { name, value } = target
-        let errors = this.state.errors;
-        this.setState({ [name]: value, errors });
+        let errors = { ...formvalue.errors };
+        setFormvalue({ ...formvalue, [name]: value, errors });
     }
 
-    handleSubmit = async (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        const { title, description, body, tagList } = this.state;
-        let navigate = this.props;
+        const { title, description, body, tagList } = formvalue
+        let { navigate } = props;
         fetch(articlesURL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                authorization: `Token ${this.props.user.token}`
+                authorization: `Token ${info.data.user.token}`
             },
             body: JSON.stringify({
                 article: {
@@ -52,111 +51,59 @@ class NewPost extends React.Component {
         })
             .then(({ article }) => {
                 navigate('/');
-                this.setState({
+                setFormvalue({
                     title: '',
                     description: '',
                     body: '',
                     tagList: ''
                 })
             })
-            .catch((errors) => this.setState({ errors }))
+            .catch((errors) => setFormvalue({ errors }))
     }
 
-    render() {
-        let { title, description, body, tagList } = this.state;
+    let { title, description, body, tagList } = formvalue;
 
-        return (
-            <div>
-                <form className="newpost">
-                    <input
-                        value={title}
-                        name="title"
-                        type="text"
-                        placeholder="Article Title"
-                        onChange={this.handleChange}
-                    />
-                    <input
-                        value={description}
-                        name="description"
-                        type="text"
-                        placeholder="What's this article is all about?"
-                        onChange={this.handleChange}
-                    />
-                    <textarea
-                        value={body}
-                        name="body"
-                        placeholder="Write your article(In markdown formate)"
-                        rows={10}
-                        onChange={this.handleChange}
-                    />
-                    <input
-                        value={tagList}
-                        name="tagList"
-                        type="text"
-                        placeholder="Enter Tags"
-                        onChange={this.handleChange}
-                    />
-                    <input
-                        type="submit"
-                        className="btn"
-                        value="Publish Article"
-                        onClick={this.handleSubmit}
-                    />
-                </form>
-            </div>
-        )
-    }
+    return (
+        <div>
+            <form className="newpost">
+                <input
+                    value={title}
+                    name="title"
+                    type="text"
+                    placeholder="Article Title"
+                    onChange={handleChange}
+                />
+                <input
+                    value={description}
+                    name="description"
+                    type="text"
+                    placeholder="What's this article is all about?"
+                    onChange={handleChange}
+                />
+                <textarea
+                    value={body}
+                    name="body"
+                    placeholder="Write your article(In markdown formate)"
+                    rows={10}
+                    onChange={handleChange}
+                />
+                <input
+                    value={tagList}
+                    name="tagList"
+                    type="text"
+                    placeholder="Enter Tags"
+                    onChange={handleChange}
+                />
+                <input
+                    type="submit"
+                    className="btn"
+                    value="Publish Article"
+                    onClick={handleSubmit}
+                />
+            </form>
+        </div>
+    )
 }
 export default withRouter(NewPost);
-
-
-
-
-// switch (name) {
-//     case "username":
-//         errors.username = value.length < 6
-//             ? "username can not be less then 6 characters"
-//             : "";
-//         break;
-//     case "email":
-//         errors.email = this.validEmail(value) ? "" : "Email is not valid!"
-//         break;
-//     case "password":
-//         let re = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])/;
-
-//         errors.password = !re.test(value)
-//             ? "password must contain a character and a number"
-//             : "";
-//         break;
-//     default:
-//         break;
-// }
-
-// function NewPost() {
-//     return (
-//         <div>
-//             <form className="newpost">
-//                 <input
-//                     type="text"
-//                     placeholder="Article Title" />
-//                 <input
-//                     type="text"
-//                     placeholder="What's this article is all about?" />
-//                 <textarea
-//                     placeholder="Write your article(In markdown formate)"
-//                     rows={10} />
-//                 <input
-//                     type="text"
-//                     placeholder="Enter Tags" />
-//                 <input
-//                     type="submit"
-//                     className="btn"
-//                     value="Publish Article" />
-//             </form>
-//         </div>
-//     )
-// }
-
-// export default NewPost;
 
 

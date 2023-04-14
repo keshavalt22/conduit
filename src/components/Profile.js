@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Pagination from "./Pagination";
 import ProfileBanner from "./ProfileBanner";
 import { articlesURL } from "../utils/constant";
@@ -6,88 +6,81 @@ import Posts from "./Posts";
 import UserContext from "../utils/UserContext";
 
 
-class Profile extends React.Component {
-    state = {
-        activeTab: "author",
-        articles: null,
-        articlesCount: 0,
-        articlesPerPage: 10,
-        activePage: 1,
-    }
+function Profile(props) {
+    let info = useContext(UserContext);
 
-    static contextType = UserContext;
+    const [activeTab, setActiveTab] = useState("author");
+    const [error, setError] = useState("");
+    const [articles, setArticles] = useState(null);
+    const [articlesCount, setArticlesCount] = useState(0);
+    const [articlesPerPage, setArticlesPerPage] = useState(10);
+    const [activePage, setActivePage] = useState(1);
 
 
-    fetchData = () => {
-        let info = this.context;
-        fetch(articlesURL + `/?${this.state.activeTab}=${info.data.user.username}`)
+    const fetchData = () => {
+        fetch(articlesURL + `/?${activeTab}=${info.data.user.username}`)
             .then(res => {
                 if (!res.ok) {
                     throw new Error("Something went wrong!")
                 }
                 return res.json();
             })
-            .then(data => this.setState({
-                articles: data.articles,
-                articlesCount: data.articlesCount
-            }))
+            .then((data) => {
+                setArticles(data.articles);
+                setArticlesCount(data.articlesCount);
+            })
             .catch(err => {
-                this.setState({ error: "Not able to fetch articles!" })
+                setError("Not able to fetch articles!")
             })
     }
 
+    useEffect(() => {
+        fetchData()
+    }, [activePage, activeTab])
 
-    componentDidMount() {
-        this.fetchData();
+    const handleActive = (tab) => {
+        setActiveTab(tab)
     }
 
-    handleActive = (tab) => {
-        this.setState({ activeTab: tab }, () => {
-            this.fetchData()
-        })
+    const updateCurrentPageIndex = (index) => {
+        setActivePage(index)
     }
-
-    updateCurrentPageIndex = (index) => {
-        this.setState({ activePage: index }, this.fetchData)
-    }
-
-
-    render() {
-        let { articles, activeTab, articlesCount, articlesPerPage, activePage, } = this.state;
-        return (
-            <section>
-                <ProfileBanner />
-                <nav>
-                    <ul className="flex width-200px feed-nav">
-                        <li>
-                            <button
-                                onClick={() => this.handleActive('author')}
-                                className={activeTab === "author" && "active"}
-                            >
-                                My Article
-                            </button>
-                        </li>
-                        <li>
-                            <button
-                                onClick={() => this.handleActive('favrited')}
-                                className={activeTab === "favrited" && "active"}
-                            >
-                                Favorite Article
-                            </button>
-                        </li>
-                    </ul>
-                    <hr></hr>
-                </nav>
-                <Posts articles={articles} />
-                <Pagination
-                    articlesCount={articlesCount}
-                    articlesPerPage={articlesPerPage}
-                    activePage={activePage}
-                    updateCurrentPageIndex={this.updateCurrentPageIndex}
-                />
-            </section>
-        )
-    }
+    return (
+        <section>
+            <ProfileBanner />
+            <nav>
+                <ul className="flex width-200px feed-nav">
+                    <li>
+                        <button
+                            onClick={() => handleActive('author')}
+                            className={activeTab === "author" && "active"}
+                        >
+                            My Article
+                        </button>
+                    </li>
+                    <li>
+                        <button
+                            onClick={() => handleActive('favrited')}
+                            className={activeTab === "favrited" && "active"}
+                        >
+                            Favorite Article
+                        </button>
+                    </li>
+                </ul>
+                <hr></hr>
+            </nav>
+            <Posts
+                articles={articles}
+                error={error}
+            />
+            <Pagination
+                articlesCount={articlesCount}
+                articlesPerPage={articlesPerPage}
+                activePage={activePage}
+                updateCurrentPageIndex={updateCurrentPageIndex}
+            />
+        </section>
+    )
 }
 
 export default Profile;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Header from './Header';
 import Home from "./Home";
 import Login from "./Login";
@@ -19,16 +19,13 @@ import UserContext from "../utils/UserContext";
 
 
 
-class App extends React.Component {
+function App(props) {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [user, setUser] = useState(null);
+    const [isVerifying, setIsVerifying] = useState(true);
 
-    state = {
-        isLoggedIn: false,
-        user: null,
-        isVerifying: true,
-    };
 
-    componentDidMount() {
-
+    useEffect(() => {
         let storageKey = localStorage[localStorageKey];
 
         if (storageKey) {
@@ -46,58 +43,56 @@ class App extends React.Component {
                         return Promise.reject(errors);
                     })
                 })
-                .then(({ user }) => this.updateUser(user))
+                .then(({ user }) => updateUser(user))
                 .catch((errors) => console.log({ errors }))
         } else {
-            this.setState({ isVerifying: false })
+            setIsVerifying(false)
         }
-    }
+    }, [isLoggedIn, isVerifying]);
 
-    updateUser = (user) => {
-        this.setState({ isLoggedIn: true, user, isVerifying: false });
+
+
+    function updateUser(user) {
+        setIsLoggedIn(true)
+        setUser(user)
+        setIsVerifying(false)
         localStorage.setItem(localStorageKey, user.token)
     };
 
-    handleLogout = () => {
-        const { navigate } = this.props;
-        this.setState({
-            isLoggedIn: false,
-            user: null
-        })
+    function handleLogout() {
+        const { navigate } = props;
+        setIsLoggedIn(false)
+        setUser(null)
         navigate('/');
         localStorage.clear();
     }
 
-    render() {
-        let data = this.state;
-        let updateUser = this.updateUser;
-        let handleLogout = this.handleLogout;
+    let data = { isLoggedIn, isVerifying, user }
 
-        if (this.state.isVerifying) {
-            return <FullPageSpinner />
-        }
-        return (
-            <div className="container">
-                <ErrorBoundary>
-                    <UserContext.Provider value={{ data, handleLogout, updateUser }}>
-                        <Header isLoggedIn={this.state.isLoggedIn} user={this.state.user} />
-                        {
-                            this.state.isLoggedIn
-                                ? <AuthenticatedApp
-                                    isLoggedIn={this.state.isLoggedIn}
-                                    user={this.state.user}
-                                    handleLogout={this.handleLogout}
-                                />
-                                : <UnauthenticatedApp
-                                    isLoggedIn={this.state.isLoggedIn}
-                                    updateUser={this.updateUser}
-                                    user={this.state.user} />
-                        }
-                    </UserContext.Provider>
-                </ErrorBoundary>
-            </div>
-        )
+    if (isVerifying) {
+        return <FullPageSpinner />
     }
+    return (
+        <div className="container">
+            <ErrorBoundary>
+                <UserContext.Provider value={{ data, handleLogout, updateUser }}>
+                    <Header isLoggedIn={isLoggedIn} user={user} />
+                    {
+                        isLoggedIn
+                            ? <AuthenticatedApp
+                                isLoggedIn={isLoggedIn}
+                                user={user}
+                                handleLogout={handleLogout}
+                            />
+                            : <UnauthenticatedApp
+                                isLoggedIn={isLoggedIn}
+                                updateUser={updateUser}
+                                user={user} />
+                    }
+                </UserContext.Provider>
+            </ErrorBoundary>
+        </div>
+    )
 }
 
 function AuthenticatedApp(props) {
@@ -167,3 +162,4 @@ function UnauthenticatedApp(props) {
 }
 
 export default withRouter(App);
+

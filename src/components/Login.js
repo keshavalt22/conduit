@@ -1,32 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import { loginURL } from "../utils/constant";
 import withRouter from "../utils/withRouter";
 
-class Login extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            email: "user185@gmail.com",
-            password: "User@185",
-            errors: {
-                email: "",
-                password: "",
-            }
-        }
-    }
+function Login(props) {
 
-    validEmail = (email) => {
+    const [formvalue, setFormvalue] = useState({
+        email: "user185@gmail.com",
+        password: "User@185",
+        errors: {
+            email: "",
+            password: ""
+        }
+    })
+
+    // console.log(formvalue);
+
+    const validEmail = (email) => {
         var filter = /^\s*[\w\-\+_]+(\.[\w\-\+_]+)*\@[\w\-\+_]+\.[\w\-\+_]+(\.[\w\-\+_]+)*\s*$/;
         return String(email).search(filter) !== -1;
     }
-    handleInput = ({ target }) => {
+    const handleInput = ({ target }) => {
 
         let { name, value } = target;
-        let errors = { ...this.state.errors };
+        let errors = { ...formvalue.errors };
 
         switch (name) {
             case "email":
-                errors.email = this.validEmail(value) ? "" : "Email is not valid!"
+                errors.email = validEmail(value) ? "" : "Email is not valid!"
                 break;
             case "password":
                 let re = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])/;
@@ -39,13 +39,13 @@ class Login extends React.Component {
                 break;
         }
 
-        this.setState({ [name]: value, errors });
+        setFormvalue({ ...formvalue, [name]: value, errors });
     };
 
-    handleSubmit = async (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        let { navigate } = this.props;
-        const { email, password } = this.state;
+        let { navigate } = props;
+        const { email, password } = formvalue;
         fetch(loginURL, {
             method: "POST",
             headers: {
@@ -64,45 +64,41 @@ class Login extends React.Component {
             return res.json()
         })
             .then(({ user }) => {
-                this.props.updateUser(user);
-                this.setState({ email: "", password: "" });
+                props.updateUser(user);
+                setFormvalue({ email: "", password: "" });
                 navigate('/');
             })
-            .catch((errors) => this.setState({ errors }))
+            .catch((errors) => setFormvalue({ errors }))
     }
 
-    render() {
-
-        let { email, password, errors } = this.state;
-        return (
-            <form onSubmit={this.handleSubmit}>
-                <input
-                    value={email}
-                    type="email"
-                    name="email"
-                    placeholder="Enter your email"
-                    onChange={this.handleInput}
-                    className={errors.email && "error"}
-                ></input>
-                <span className="errormsg">{errors.email}</span>
-                <input
-                    value={password}
-                    onChange={this.handleInput}
-                    type="password"
-                    name="password"
-                    placeholder="Enter your password"
-                    className={errors.password && "error"}
-                ></input>
-                <span className="errormsg">{errors.password}</span>
-                <input
-                    className="btn"
-                    disabled={errors.email || errors.password}
-                    type="submit"
-                    value="submit"
-                />
-            </form>
-        )
-    }
+    return (
+        <form onSubmit={handleSubmit}>
+            <input
+                value={formvalue.email}
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                onChange={handleInput}
+                className={formvalue.errors.email && "error"}
+            ></input>
+            <span className="errormsg">{formvalue.errors.email}</span>
+            <input
+                value={formvalue.password}
+                onChange={handleInput}
+                type="password"
+                name="password"
+                placeholder="Enter your password"
+                className={formvalue.errors.password && "error"}
+            ></input>
+            <span className="errormsg">{formvalue.errors.password}</span>
+            <input
+                className="btn"
+                disabled={formvalue.errors.email || formvalue.errors.password}
+                type="submit"
+                value="submit"
+            />
+        </form>
+    )
 }
 
 export default withRouter(Login);

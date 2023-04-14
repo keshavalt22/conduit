@@ -1,43 +1,42 @@
-import React from "react";
+import React, { useState, useContext } from "react";
 import { userVerifyURL } from "../utils/constant";
 import withRouter from "../utils/withRouter";
 import UserContext from "../utils/UserContext";
 
-class Setting extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
+function Setting(props) {
+    let info = useContext(UserContext);
+
+    const [formvalue, setFormvalue] = useState({
+        username: '',
+        bio: '',
+        image: '',
+        email: '',
+        password: '',
+        errors: {
             username: '',
             bio: '',
             image: '',
             email: '',
             password: '',
-            errors: {
-                username: '',
-                bio: '',
-                image: '',
-                email: '',
-                password: '',
-            }
         }
-    }
+    })
 
 
-    handleChange = ({ target }) => {
+    const handleChange = ({ target }) => {
         let { name, value } = target
-        let errors = this.state.errors;
-        this.setState({ [name]: value, errors });
+        let errors = { ...formvalue.errors };
+        setFormvalue({ ...formvalue, [name]: value, errors });
     }
 
-    handleSubmit = async (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        let { navigate } = this.props;
-        const { username, bio, image, email, password } = this.state;
+        let { navigate } = props;
+        const { username, bio, image, email, password } = formvalue;
         fetch(userVerifyURL, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                authorization: `Token ${this.props.user.token}`
+                authorization: `Token ${info.data.user.token}`
             },
             body: JSON.stringify({
                 user: {
@@ -57,83 +56,69 @@ class Setting extends React.Component {
             return res.json()
         })
             .then(({ user }) => {
-                this.props.updateUser(user);
+                props.updateUser(user);
                 navigate(`/`);
-                // this.props.history.push(`/${username}`);
             })
-            .catch((errors) => this.setState({ errors }))
+            .catch((errors) => setFormvalue({ errors }))
     }
 
-    static contextType = UserContext;
 
-    render() {
-        let info = this.context;
-        console.log(info)
 
-        let { username, bio, image, email, password } = this.state;
-        let handleLogout = info.handleLogout;
+    let { username, bio, image, email, password } = formvalue;
+    let handleLogout = info.handleLogout;
 
-        return (
-            <div>
-                <form className="newpost">
-                    <input
-                        value={username}
-                        name="username"
-                        type="text"
-                        placeholder={info.data.user.username}
-                        onChange={this.handleChange}
-                    />
-                    <input
-                        value={email}
-                        name="email"
-                        type="email"
-                        placeholder={info.data.user.email}
-                        onChange={this.handleChange}
-                    />
-                    <textarea
-                        value={bio}
-                        name="bio"
-                        placeholder="Bio"
-                        rows={10}
-                        onChange={this.handleChange}
-                    />
-                    <input
-                        className="block w-full border px-4 py-3 rounded-sm"
-                        type="text"
-                        placeholder="URL of profile picture"
-                        value={image}
-                        name="image"
-                        onChange={this.handleChange}
-                    />
-                    <input
-                        value={password}
-                        name="password"
-                        type="password"
-                        placeholder="Password"
-                        onChange={this.handleChange}
-                    />
-                    <input
-                        type="submit"
-                        className="btn"
-                        onClick={this.handleSubmit}
-                    />
-                    <input
-                        type="submit"
-                        value="Log-Out"
-                        className="btn"
-                        onClick={handleLogout}
-                    />
-                </form>
-            </div>
-        )
-    }
+
+    return (
+        <div>
+            <form className="newpost" onSubmit={handleSubmit}>
+                <input
+                    value={username}
+                    name="username"
+                    type="text"
+                    placeholder={info.data.user.username}
+                    onChange={handleChange}
+                />
+                <input
+                    value={email}
+                    name="email"
+                    type="email"
+                    placeholder={info.data.user.email}
+                    onChange={handleChange}
+                />
+                <textarea
+                    value={bio}
+                    name="bio"
+                    placeholder="Bio"
+                    rows={10}
+                    onChange={handleChange}
+                />
+                <input
+                    className="block w-full border px-4 py-3 rounded-sm"
+                    type="text"
+                    placeholder="URL of profile picture"
+                    value={image}
+                    name="image"
+                    onChange={handleChange}
+                />
+                <input
+                    value={password}
+                    name="password"
+                    type="password"
+                    placeholder="Password"
+                    onChange={handleChange}
+                />
+                <input
+                    type="submit"
+                    className="btn"
+                />
+                <input
+                    type="submit"
+                    value="Log-Out"
+                    className="btn"
+                    onClick={handleLogout}
+                />
+            </form>
+        </div>
+    )
 }
 export default withRouter(Setting);
-
-
-
-// function Setting() {
-//     return <h2>Setting</h2>
-// }
-
-// export default Setting;

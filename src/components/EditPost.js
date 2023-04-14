@@ -1,50 +1,50 @@
-import React from "react";
+import React, { useState, useContext } from "react";
 import withRouter from "../utils/withRouter";
 import { articlesURL } from "../utils/constant";
+import UserContext from "../utils/UserContext";
 
-class EditPost extends React.Component {
-    constructor(props) {
-        super(props);
-        let article = this.props.location.state.article;
+function EditPost(props) {
 
-        this.state = {
-            title: article.title,
-            description: article.description,
-            body: article.body,
-            tagList: article.tagList,
-            errors: {
-                title: "",
-                description: "",
-                body: "",
-                tagList: "",
-            }
+    let info = useContext(UserContext);
+    let article = props.location.state.article.article;
+    // console.log(article)
+
+    const [formvalue, setFormvalue] = useState({
+        title: article.title,
+        description: article.description,
+        body: article.body,
+        tagList: article.tagList,
+        errors: {
+            title: "",
+            description: "",
+            body: "",
+            tagList: "",
         }
+    })
+
+    const handleChange = ({ target }) => {
+        let { name, value } = target
+        let errors = { ...formvalue.errors };
+        setFormvalue({ ...formvalue, [name]: value, errors });
     }
 
-
-    handleChange = ({ target }) => {
-        let { name, value } = target;
-        let errors = this.state.errors;
-        this.setState({ [name]: value, errors })
-    }
-
-    handleSubmit = async (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        const { title, description, body, tagList } = this.state;
-        let slug = this.props.params.slug;
-        let { navigate } = this.props;
+        const { title, description, body, tagList } = formvalue;
+        let slug = props.params.slug;
+        let { navigate } = props;
         fetch(articlesURL, {
             method: "PUT",
             headers: {
                 "Content=Type": "application/json",
-                authorization: `Token ${this.props.user.token}`
+                authorization: `Token ${info.data.user.token}`
             },
             body: JSON.stringify({
                 article: {
                     title,
                     description,
                     body,
-                    tagList,
+                    tagList: tagList.split(',').map(tag => tag.trim()),
                 }
             })
         })
@@ -58,54 +58,52 @@ class EditPost extends React.Component {
                 navigate(`/articles/${slug}`);
             })
             .catch((errors) => {
-                this.setState({ errors })
+                setFormvalue({ errors })
             })
     }
 
-    render() {
-        const { title, description, body, tagList } = this.state;
-        return (
-            <div>
-                <form className="newpost"
-                    onSubmit={this.handleSubmit}
-                >
-                    <input
-                        value={title}
-                        name="title"
-                        type="text"
-                        placeholder="Article Title"
-                        onChange={this.handleChange}
-                    />
-                    <input
-                        value={description}
-                        name="description"
-                        type="text"
-                        placeholder="What's this article is all about?"
-                        onChange={this.handleChange}
-                    />
-                    <textarea
-                        value={body}
-                        name="body"
-                        placeholder="Write your article(In markdown formate)"
-                        rows={10}
-                        onChange={this.handleChange}
-                    />
-                    <input
-                        value={tagList}
-                        name="tagList"
-                        type="text"
-                        placeholder="Enter Tags"
-                        onChange={this.handleChange}
-                    />
-                    <input
-                        type="submit"
-                        className="btn"
-                        value="Publish Article"
-                    />
-                </form>
-            </div>
-        )
-    }
+    const { title, description, body, tagList } = formvalue;
+    return (
+        <div>
+            <form className="newpost"
+                onSubmit={handleSubmit}
+            >
+                <input
+                    value={title}
+                    name="title"
+                    type="text"
+                    placeholder="Article Title"
+                    onChange={handleChange}
+                />
+                <input
+                    value={description}
+                    name="description"
+                    type="text"
+                    placeholder="What's this article is all about?"
+                    onChange={handleChange}
+                />
+                <textarea
+                    value={body}
+                    name="body"
+                    placeholder="Write your article(In markdown formate)"
+                    rows={10}
+                    onChange={handleChange}
+                />
+                <input
+                    value={tagList}
+                    name="tagList"
+                    type="text"
+                    placeholder="Enter Tags"
+                    onChange={handleChange}
+                />
+                <input
+                    type="submit"
+                    className="btn"
+                    value="Publish Article"
+                />
+            </form>
+        </div>
+    )
 }
 
 

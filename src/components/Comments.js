@@ -1,44 +1,34 @@
-import React from "react";
+import React, { useContext } from "react";
 import { articlesURL } from "../utils/constant";
 import UserContext from "../utils/UserContext";
+import Loader from "./Loader";
 
 
-class Comments extends React.Component {
+function Comments(props) {
+    let info = useContext(UserContext);
+    // console.log(info);
 
-    handleDelete = (id) => {
-        const slug = this.props.slug;
-        fetch(articlesURL + "/" + slug + "/commetns/" + id, {
-            method: "DELETE",
-            headers: {
-                authorization: `Token ${this.props.user.token}`
-            }
-        }).then((res) => {
-            if (!res) {
-                throw new Error("cannot delete");
-            } else {
-                return res.json();
-            }
-        })
+    function getDate(date) {
+        let newDate = new Date(date).toISOString().split('T')[0];
+        return newDate;
     }
 
-    static contextType = UserContext;
+    const comments = props.comments;
+    let isLoggedIn = info.data.isLoggedIn;
+    let loggedInUser = info.data.user.username;
 
-    render() {
 
-        let info = this.context;
+    if (!comments) {
+        return < Loader />
+    }
 
-        console.log(info.data.user.username);
-
-        if (!this.props.comments) {
-            return "";
-        }
-
-        const comments = this.props.comments;
-
-        return (
-            <ul>
-                {
-                    comments.map((comment) => {
+    return (
+        <ul>
+            {comments.length === 0 ? (
+                <h2>No Comments</h2>
+            ) : (
+                comments.map((comment) => {
+                    return (
                         <li className="border rounded-md mt-8" key={comment.id}>
                             <p className="p-4">{comment.body}</p>
                             <div className="flex items-center justify-between mt-6 p-4 bg-gray-100 bordet-t border-gray-500">
@@ -58,7 +48,7 @@ class Comments extends React.Component {
                                 {this.props.user === null ? (
                                     ""
                                 ) : info.data.user.username === comment.author.username ? (
-                                    <button onClick={() => this.handleDelete(comment.id)}>
+                                    <button onClick={(e) => props.handleDelete(e)}>
                                         Delete
                                     </button>
                                 ) : (
@@ -66,15 +56,11 @@ class Comments extends React.Component {
                                 )}
                             </div>
                         </li>
-                    })
-                }
-            </ul>
-        )
-
-
-    }
-
-
+                    )
+                }))
+            }
+        </ul>
+    )
 }
 
 export default Comments;
